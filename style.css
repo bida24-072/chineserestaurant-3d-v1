@@ -1,0 +1,161 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Georgia', serif;
+    color: #f5f5f5;
+    background-color: #050000;
+    overflow-x: hidden;
+}
+
+/* --- LOADING SCREEN --- */
+#loader {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: #050000;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 1s ease;
+}
+#loader.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+.spinner {
+    width: 50px; height: 50px;
+    border: 3px solid rgba(212, 175, 55, 0.3);
+    border-top-color: #d4af37;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }
+#loader h2 { font-size: 1rem; letter-spacing: 4px; color: #d4af37; font-family: 'Arial', sans-serif;}
+
+/* --- HEADER & NAVIGATION --- */
+header {
+    position: fixed;
+    top: 0; left: 0; width: 100%;
+    padding: 30px 60px;
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 100;
+    background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+}
+.logo {
+    font-size: 1.8rem; font-weight: bold; letter-spacing: 4px;
+    color: #d4af37; text-decoration: none; text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+}
+nav a {
+    color: #f5f5f5; text-decoration: none; margin-left: 30px;
+    font-family: 'Arial', sans-serif; font-size: 0.9rem;
+    text-transform: uppercase; letter-spacing: 2px; transition: color 0.3s;
+}
+nav a:hover, nav a.active { color: #d4af37; }
+nav a.btn { border: 1px solid #d4af37; padding: 10px 20px; border-radius: 4px; }
+nav a.btn:hover { background-color: #d4af37; color: #000; }
+
+/* --- 3D HOME PAGE --- */
+#canvas-container {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 1;
+}
+/* Cinematic Vignette */
+#canvas-container::after {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    box-shadow: inset 0 0 150px rgba(0,0,0,0.9);
+    pointer-events: none;
+}
+
+.ui-layer {
+    position: relative; z-index: 2; pointer-events: none;
+}
+.scroll-content { pointer-events: auto; }
+
+.hero-section {
+    height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; padding-left: 10%;
+}
+h1 {
+    font-size: 5.5rem; line-height: 1.1; color: #ffffff;
+    text-shadow: 2px 2px 20px rgba(0,0,0,1);
+}
+h1 span { color: #ff3333; font-style: italic; }
+.hero-section p {
+    font-family: 'Arial', sans-serif; font-size: 1.1rem;
+    max-width: 400px; margin-top: 20px; color: #ddd;
+    text-shadow: 1px 1px 5px rgba(0,0,0,1);
+}
+.scroll-indicator {
+    margin-top: 50px; font-family: 'Arial', sans-serif;
+    color: #d4af37; animation: pulse 2s infinite;
+}
+@keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
+
+.content-section {
+    height: 100vh; display: flex; align-items: center; padding: 0 10%;
+}
+.right-align { justify-content: flex-end; }
+.left-align { justify-content: flex-start; }
+.text-box {
+    background: rgba(5, 0, 0, 0.85); padding: 50px;
+    border-left: 4px solid #ff3333; max-width: 500px;
+    backdrop-filter: blur(15px); border-radius: 8px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+}
+.text-box h2 { font-size: 2.5rem; color: #d4af37; margin-bottom: 15px; }
+.text-box p { font-family: 'Arial', sans-serif; line-height: 1.8; color: #bbb; }
+
+.cta-btn {
+    display: inline-block; margin-top: 25px; padding: 15px 35px;
+    background-color: #ff3333; color: white; text-decoration: none;
+    font-family: 'Arial', sans-serif; font-weight: bold;
+    border-radius: 4px; transition: background 0.3s, transform 0.2s;
+    border: none; cursor: pointer;
+}
+.cta-btn:hover { background-color: #cc0000; transform: translateY(-2px); }
+footer { padding: 40px; text-align: center; font-family: 'Arial', sans-serif; font-size: 0.8rem; color: #666; background: #000; }
+
+/* --- SOLID PAGES (Menu, About, Contact) --- */
+.solid-bg-page { background: radial-gradient(circle at top, #1a0505 0%, #000 100%); min-height: 100vh; }
+.page-content { padding: 150px 10% 50px 10%; }
+.page-title { text-align: center; font-size: 3.5rem; color: #d4af37; margin-bottom: 50px; }
+
+/* Menu Grid */
+.menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 1000px; margin: 0 auto; }
+.menu-item { border-bottom: 1px solid #333; padding-bottom: 20px; }
+.menu-item h3 { font-size: 1.5rem; color: #fff; margin-bottom: 10px; }
+.menu-item p { font-family: 'Arial', sans-serif; color: #aaa; font-size: 0.9rem; margin-bottom: 10px; }
+.price { color: #ff3333; font-weight: bold; font-size: 1.2rem; }
+
+/* About Layout */
+.about-layout { display: flex; gap: 60px; max-width: 1200px; margin: 0 auto; align-items: center; }
+.about-text { flex: 1; }
+.about-text h2 { color: #d4af37; font-size: 2rem; margin-bottom: 15px; margin-top: 30px; }
+.about-text h2:first-child { margin-top: 0; }
+.about-text p { font-family: 'Arial', sans-serif; color: #ccc; line-height: 1.8; margin-bottom: 20px; font-size: 1.1rem; }
+.about-image { flex: 1; }
+.image-placeholder {
+    width: 100%; height: 500px; background: linear-gradient(45deg, #1a0505, #3a0a0a);
+    border: 2px solid #d4af37; display: flex; justify-content: center; align-items: center;
+    position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+/* Contact Layout */
+.contact-layout { display: flex; gap: 50px; justify-content: center; align-items: flex-start; }
+.contact-info h1 { font-size: 3rem; color: #d4af37; margin-bottom: 30px;}
+.contact-info p { font-family: 'Arial', sans-serif; margin-bottom: 20px; line-height: 1.6; font-size: 1.1rem;}
+.contact-info strong { color: #ff3333; }
+.contact-form { background: rgba(255,255,255,0.05); padding: 40px; border-radius: 8px; width: 400px; }
+.contact-form h2 { margin-bottom: 20px; font-weight: normal;}
+.contact-form input {
+    width: 100%; padding: 15px; margin-bottom: 15px; background: rgba(0,0,0,0.5);
+    border: 1px solid #444; color: white; font-family: 'Arial', sans-serif;
+}
+.contact-form input:focus { outline: none; border-color: #d4af37;}
+.contact-form .cta-btn { width: 100%; }
