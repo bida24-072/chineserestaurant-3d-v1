@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golden Dragon | iTowers, Gaborone</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Updated Import Map for 3D Model Loading -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body class="home-page">
+
+    <!-- Loading Screen -->
+    <div id="loader">
+        <div class="spinner"></div>
+        <h2>PREPARING THE KITCHEN...</h2>
+    </div>
+
+    <!-- Fixed 3D Canvas -->
+    <div id="canvas-container"></div>
+
+    <!-- UI Overlay -->
+    <div class="ui-layer">
+        <header>
+            <a href="index.html" class="logo">GOLDEN DRAGON</a>
+            <nav>
+                <a href="index.html" class="active">Home</a>
+                <a href="menu.html">Menu</a>
+                <a href="about.html">About</a>
+                <a href="contact.html" class="btn">Book a Table</a>
+            </nav>
+        </header>
+
+        <!-- Scrollable Content -->
+        <main class="scroll-content">
+            
+            <section class="hero-section">
+                <h1>Wok Hei<br><span>Perfected.</span></h1>
+                <p>Experience the breath of the wok. Master chefs tossing fresh, premium ingredients over an open flame.</p>
+                <div class="scroll-indicator">Scroll to explore ↓</div>
+            </section>
+
+            <section class="content-section right-align">
+                <div class="text-box">
+                    <h2>The Art of Tossing</h2>
+                    <p>Located in the heart of Gaborone at the prestigious iTowers, our kitchen brings the fiery passion of authentic Chinese cuisine to Botswana.</p>
+                </div>
+            </section>
+
+            <section class="content-section left-align">
+                <div class="text-box">
+                    <h2>Find Us at iTowers</h2>
+                    <p>Just steps away from Room50Two. Join us for an unforgettable dining experience with panoramic views of the Gaborone skyline.</p>
+                    <a href="contact.html" class="cta-btn">Get Directions</a>
+                </div>
+            </section>
+
+            <footer>
+                <p>&copy; 2024 Golden Dragon. iTowers, Gaborone, Botswana.</p>
+            </footer>
+        </main>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
