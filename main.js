@@ -8,9 +8,9 @@ const scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2(0x050000, 0.02);
 
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-// Camera moved back a bit to fit the larger model
-camera.position.set(0, 2, 15);
-camera.lookAt(0, 0, 0);
+// Pulled camera back slightly so we can see the whole body
+camera.position.set(0, 1, 12);
+camera.lookAt(0, 1, 0);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -37,8 +37,7 @@ scene.add(spotLight);
 const chefGroup = new THREE.Group();
 scene.add(chefGroup);
 
-// *** REPLACE THIS URL WITH YOUR OWN CHEF MODEL ***
-const modelURL = 'https://threejs.org/examples/models/gltf/Soldier.glb';
+const modelURL = 'https://threejs.org/examples/models/gltf/Soldier.glb'; // Change this to './chef.glb' later
 
 let mixer = null;
 const loader = new GLTFLoader();
@@ -47,28 +46,25 @@ const loadingScreen = document.getElementById('loader');
 loader.load(modelURL, (gltf) => {
     const model = gltf.scene;
     
-    // --- DYNAMIC SCALING MAGIC ---
-    // 1. Calculate the exact bounding box of whatever model is loaded
+    // --- DYNAMIC SCALING ---
     const box = new THREE.Box3().setFromObject(model);
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
 
-    // 2. Set how tall we want the model to be on screen
-    // The camera is at Z=15. A height of 8 or 9 will fill up most of the screen.
-    const targetHeight = 8.5; 
+    // SMALLER TARGET HEIGHT: Fits nicely on screen (Try 4.5 to 5.5)
+    const targetHeight = 5.0; 
     const scaleFactor = targetHeight / size.y;
     
-    // 3. Apply the scale
     model.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
-    // 4. Recalculate to perfectly center the model
+    // Recalculate to perfectly center the model at origin (0,0,0)
     box.setFromObject(model);
     box.getCenter(center);
     
-    // Center the model at X=0, Z=0, and adjust Y so feet are near the bottom
+    // Center exactly on X and Z, and adjust Y so feet are at the bottom
     model.position.x = -center.x;
     model.position.z = -center.z;
-    model.position.y = -center.y - 2; // Push down slightly
+    model.position.y = -center.y; 
 
     model.traverse((node) => {
         if (node.isMesh) {
@@ -79,7 +75,6 @@ loader.load(modelURL, (gltf) => {
 
     chefGroup.add(model);
 
-    // Play built-in animations if the model has them
     if (gltf.animations && gltf.animations.length > 0) {
         mixer = new THREE.AnimationMixer(model);
         const action = mixer.clipAction(gltf.animations[0]);
@@ -94,24 +89,24 @@ loader.load(modelURL, (gltf) => {
 });
 
 // --- 4. THE WOK & FOOD PHYSICS ---
-// We attach the wok to the chefGroup so it rotates with the chef when scrolling
 const wokGroup = new THREE.Group();
-wokGroup.position.set(2.5, 1.5, 2.5); // Positioned to the right and front of the chef
+// Positioned to the right, at chest height
+wokGroup.position.set(2.0, 1.5, 1.5); 
 chefGroup.add(wokGroup);
 
 const wok = new THREE.Mesh(
-    new THREE.CylinderGeometry(1.8, 1.0, 0.7, 32), // Made the wok bigger too
+    new THREE.CylinderGeometry(1.2, 0.7, 0.5, 32), 
     new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.9, roughness: 0.3 })
 );
 wok.rotation.z = -Math.PI / 4;
 wokGroup.add(wok);
 
-// Handle for the Wok
+// Handle
 const handle = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.1, 0.1, 2.5),
+    new THREE.CylinderGeometry(0.08, 0.08, 1.8),
     new THREE.MeshStandardMaterial({ color: 0x8b4513, roughness: 0.9 })
 );
-handle.position.set(2.2, 0.8, 0);
+handle.position.set(1.5, 0.5, 0);
 handle.rotation.z = Math.PI / 2;
 wokGroup.add(handle);
 
@@ -121,7 +116,7 @@ const foodPieces = [];
 const foodColors = [0xffaa00, 0xff5500, 0x00aa00, 0x884400];
 
 for (let i = 0; i < 30; i++) {
-    const size = 0.15 + Math.random() * 0.15;
+    const size = 0.1 + Math.random() * 0.1;
     const piece = new THREE.Mesh(
         new THREE.BoxGeometry(size, size, size), 
         new THREE.MeshStandardMaterial({ color: foodColors[Math.floor(Math.random() * foodColors.length)], roughness: 0.6 })
@@ -134,8 +129,8 @@ for (let i = 0; i < 30; i++) {
 
 // --- 5. SCROLL INTERACTION ---
 let scrollY = 0;
-let targetCameraY = 2;
-let targetCameraZ = 15;
+let targetCameraY = 1;
+let targetCameraZ = 12;
 let targetChefRotY = 0;
 
 window.addEventListener('scroll', () => {
@@ -143,11 +138,10 @@ window.addEventListener('scroll', () => {
     const maxScroll = document.body.scrollHeight - window.innerHeight;
     const scrollPercent = Math.min(scrollY / maxScroll, 1);
 
-    // As user scrolls, zoom out and pan slightly
-    targetCameraY = 2 - (scrollPercent * 3); 
-    targetCameraZ = 15 + (scrollPercent * 5);
+    // Zoom out slightly and pan up as user scrolls
+    targetCameraY = 1 + (scrollPercent * 2); 
+    targetCameraZ = 12 + (scrollPercent * 4);
     
-    // Rotate the chef to show his side profile as you scroll
     targetChefRotY = scrollPercent * Math.PI * 0.4; 
 });
 
@@ -160,18 +154,19 @@ function animate() {
 
     if (mixer) mixer.update(0.016);
 
-    // Animate the Wok Tossing (Up and down motion)
+    // Wok Toss Animation
     const tossSpeed = 2.5;
     wokGroup.rotation.z = Math.sin(time * tossSpeed) * 0.4 - 0.2; 
-    wokGroup.position.y = 1.5 + Math.sin(time * tossSpeed) * 0.3; // Move wok up and down
+    wokGroup.position.y = 1.5 + Math.sin(time * tossSpeed) * 0.2;
     wok.rotation.z = -Math.PI / 4 + Math.sin(time * tossSpeed) * 0.2;
 
-    // Smooth Camera Movement
+    // Camera Movement
     camera.position.y += (targetCameraY - camera.position.y) * 0.05;
     camera.position.z += (targetCameraZ - camera.position.z) * 0.05;
     chefGroup.rotation.y += (targetChefRotY - chefGroup.rotation.y) * 0.05;
     
-    const lookAtY = 1 - (scrollY / (document.body.scrollHeight - window.innerHeight)) * 2;
+    // Look at the center of the chef
+    const lookAtY = 1 + (scrollY / (document.body.scrollHeight - window.innerHeight)) * 1;
     camera.lookAt(0, lookAtY, 0);
 
     // Food Physics
@@ -181,7 +176,7 @@ function animate() {
     foodPieces.forEach((piece) => {
         if (!piece.userData.isFlying) {
             const angle = Math.random() * Math.PI * 2;
-            const radius = Math.random() * 1.0;
+            const radius = Math.random() * 0.7;
             piece.position.set(
                 wokWorldPos.x + Math.cos(angle) * radius,
                 wokWorldPos.y,
@@ -190,9 +185,9 @@ function animate() {
 
             if (Math.sin(time * tossSpeed) > 0.5 && Math.random() > 0.9) {
                 piece.userData.isFlying = true;
-                piece.userData.velocityY = 6 + Math.random() * 3;
-                piece.userData.velocityX = (Math.random() - 0.5) * 3;
-                piece.userData.velocityZ = (Math.random() - 0.5) * 3;
+                piece.userData.velocityY = 4 + Math.random() * 2;
+                piece.userData.velocityX = (Math.random() - 0.5) * 2;
+                piece.userData.velocityZ = (Math.random() - 0.5) * 2;
             }
         } else {
             piece.userData.velocityY -= 9.8 * 0.016;
@@ -202,7 +197,7 @@ function animate() {
             piece.rotation.x += 0.1;
             piece.rotation.y += 0.1;
 
-            if (piece.position.y < wokWorldPos.y - 1.5) piece.userData.isFlying = false;
+            if (piece.position.y < wokWorldPos.y - 1) piece.userData.isFlying = false;
         }
     });
 
